@@ -5,6 +5,8 @@ class Settings(BaseSettings):
     APP_NAME: str = "ChatApp"
     DEBUG: bool = True
 
+    BACKEND_URL: str
+
     DATABASE_URL: str
 
     RABBITMQ_URL: str
