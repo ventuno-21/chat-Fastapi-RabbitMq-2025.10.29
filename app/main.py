@@ -4,9 +4,10 @@ from fastapi import FastAPI
 from sqlalchemy import text
 
 # from app.api import a_auth, a_chat, a_admin
-from app.api import a_auth
+from app.api import a_auth, a_chat
 from app.config import settings
 from app.db import SessionLocal, get_session
+from app.services.messaging import rabbitmq
 
 
 async def lifespan(app: FastAPI):
@@ -16,9 +17,13 @@ async def lifespan(app: FastAPI):
     async with SessionLocal() as session:
         await session.execute(text("SELECT 1"))
         print("✅ Database connection established successfully.")
+    await rabbitmq.connect()
+    print("✅ Connected to RabbitMQ.")
 
     yield
     # shutdown
+    await rabbitmq.disconnect()
+    print("🛑 Disconnected from RabbitMQ.")
     print("🛑 Application shutting down...")
 
 
@@ -34,5 +39,5 @@ def read_root():
 
 
 app.include_router(a_auth.router)
-# app.include_router(a_chat.router)
+app.include_router(a_chat.router)
 # app.include_router(a_admin.router)
