@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from app.config import settings
 
 # from app.api import a_auth, a_chat, a_admin
+from app.api import a_auth
 
 
 # @asynccontextmanager
@@ -27,6 +28,6 @@ def read_root():
     return {"message": "Chat API is running!"}
 
 
-# app.include_router(a_admin.router)
+app.include_router(a_auth.router)
 # app.include_router(a_chat.router)
 # app.include_router(a_admin.router)
