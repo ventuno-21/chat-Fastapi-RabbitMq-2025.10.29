@@ -1,24 +1,29 @@
-from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-# from app.database import init_db
-from app.config import settings
+from fastapi import FastAPI
+from sqlalchemy import text
 
 # from app.api import a_auth, a_chat, a_admin
 from app.api import a_auth
+from app.config import settings
+from app.db import SessionLocal, get_session
 
 
-# @asynccontextmanager
-# async def lifespan(app: FastAPI):
-#     """Lifespan context — handles startup and shutdown events."""
-#     await init_db()
-#     yield
-#     # await some_cleanup_function()
+async def lifespan(app: FastAPI):
+    """Lifespan context — handles startup and shutdown events."""
+
+    # startup
+    async with SessionLocal() as session:
+        await session.execute(text("SELECT 1"))
+        print("✅ Database connection established successfully.")
+
+    yield
+    # shutdown
+    print("🛑 Application shutting down...")
 
 
-# app = FastAPI(title=settings.APP_NAME, debug=settings.DEBUG, lifespan=lifespan)
+app = FastAPI(title=settings.APP_NAME, debug=settings.DEBUG, lifespan=lifespan)
 
-app = FastAPI(title=settings.APP_NAME, debug=settings.DEBUG)
 print(f"==============================={settings.EMAIL_SENDER}")
 
 

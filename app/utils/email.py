@@ -2,7 +2,7 @@ from app.config import settings
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from app.core.config import settings
+from app.config import settings
 
 
 def send_reset_email(to_email: str, token: str):

@@ -9,8 +9,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import settings
 from app.models.m_user import User
 from app.schemas.s_user import UserCreate, UserLogin, UserOut
-from app.services.image_utils import resize_base64_image
-from app.utils.deps import get_current_user, session
+from app.utils.image_utils import resize_base64_image
+from app.utils.deps import get_current_user, SessionDep
 from app.utils.email import send_reset_email
 from app.utils.jwt import create_access_token, verify_token
 from app.utils.password import hash_password, verify_password
@@ -19,7 +19,7 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 @router.post("/register", response_model=UserOut)
-async def register(user: UserCreate, session=session):
+async def register(user: UserCreate, session: SessionDep):
     existing = await session.execute(select(User).where(User.username == user.username))
     if existing.scalar():
         raise HTTPException(
@@ -38,7 +38,7 @@ async def register(user: UserCreate, session=session):
 
 
 @router.post("/login")
-async def login(user: UserLogin, session: AsyncSession = session):
+async def login(user: UserLogin, session: SessionDep):
     result = await session.execute(select(User).where(User.username == user.username))
     db_user = result.scalar()
     if not db_user or not verify_password(user.password, db_user.hashed_password):
@@ -50,8 +50,8 @@ async def login(user: UserLogin, session: AsyncSession = session):
 
 @router.post("/upload-profile")
 async def upload_profile_image(
+    session: SessionDep,
     file: UploadFile = File(...),
-    session: AsyncSession = session,
     username: str = Depends(get_current_user),
 ):
     """
@@ -106,7 +106,7 @@ Query
 
 
 @router.post("/request-reset")
-async def request_reset(email: EmailStr, session=session):
+async def request_reset(email: EmailStr, session: SessionDep):
     result = await session.execute(select(User).where(User.email == email))
     user = result.scalar()
     if not user:
@@ -121,9 +121,9 @@ async def request_reset(email: EmailStr, session=session):
 
 @router.post("/reset-password")
 async def reset_password(
+    session: SessionDep,
     token: str = Query(...),
     new_password: str = Query(...),
-    session: AsyncSession = session,
 ):
     payload = verify_token(token)
     if not payload:
