@@ -23,7 +23,7 @@ $ alembic init -t async migrations
       os.path.join(os.path.dirname(__file__), "..", "..")
   )  # noqa: F401
   sys.path.insert(0, project_root)  # noqa: F401
-  
+
   from backend.db.sqlmodel_models import Seller, Shipment  # noqa: F401
 
   from dotenv import load_dotenv
@@ -46,6 +46,11 @@ $ alembic init -t async migrations
   print("METADATA TABLES:", list(SQLModel.metadata.tables.keys()))
   print("o" * 35)
   target_metadata = SQLModel.metadata
+
+  Notey Note: in some other configuration, please note almbic databse should be synchrounous not asynchrounous so use to db_urls like below:
+      DATABASE_URL=postgresql+asyncpg://postgres:postgresql@localhost:5432/chat_db
+      ALEMBIC_DATABASE_URL=postgresql://postgres:postgresql@localhost:5432/chat_db
+
 
 4) Also we should be sure Alembic can find our models, therefore we should use "Base":
 inside env.py change the value of "target_metadata"

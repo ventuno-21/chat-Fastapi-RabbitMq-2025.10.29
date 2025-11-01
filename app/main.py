@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from sqlalchemy import text
 
-from app.api import a_auth, a_chat, a_admin
+from app.api import a_auth, a_chat, a_admin, a_user
 from app.config import settings
 from app.db import SessionLocal, get_session
 from app.services.messaging import rabbitmq
@@ -40,3 +40,4 @@ def read_root():
 app.include_router(a_auth.router)
 app.include_router(a_chat.router)
 app.include_router(a_admin.router)
+app.include_router(a_user.router)

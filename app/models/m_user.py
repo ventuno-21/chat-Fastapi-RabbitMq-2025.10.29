@@ -1,7 +1,19 @@
-from sqlalchemy import String, Boolean, DateTime, func
+from datetime import datetime, timezone
+
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, Table, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from datetime import datetime
+
 from app.models.base import Base
+
+
+class UserBlock(Base):
+    __tablename__ = "user_block"
+
+    blocker_id: Mapped[int] = mapped_column(ForeignKey("users.id"), primary_key=True)
+    blocked_id: Mapped[int] = mapped_column(ForeignKey("users.id"), primary_key=True)
+    blocked_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
 
 
 class User(Base):
@@ -19,3 +31,10 @@ class User(Base):
     )
     channels = relationship("Channel", secondary="channel_user", back_populates="users")
     groups = relationship("Group", secondary="group_user", back_populates="users")
+    blocked_users = relationship(
+        "User",
+        secondary="user_block",
+        primaryjoin=id == UserBlock.blocker_id,
+        secondaryjoin=id == UserBlock.blocked_id,
+        backref="blocked_by",
+    )
