@@ -90,7 +90,7 @@ async def block_user(
     blocker = await session.execute(select(User).where(User.username == username))
     blocker_id = blocker.scalar_one().id
     await session.execute(
-        insert(user_block).values(blocker_id=blocker_id, blocked_id=user_id)
+        insert(UserBlock).values(blocker_id=blocker_id, blocked_id=user_id)
     )
     await session.commit()
     return {"message": "User blocked"}
@@ -105,8 +105,8 @@ async def leave_group(
     user = await session.execute(select(User).where(User.username == username))
     user_id = user.scalar_one().id
     await session.execute(
-        delete(group_user).where(
-            group_user.c.group_id == group_id, group_user.c.user_id == user_id
+        delete(GroupUser).where(
+            GroupUser.group_id == group_id, GroupUser.user_id == user_id
         )
     )
     await session.commit()
@@ -122,8 +122,8 @@ async def leave_channel(
     user = await session.execute(select(User).where(User.username == username))
     user_id = user.scalar_one().id
     await session.execute(
-        delete(channel_user).where(
-            channel_user.c.channel_id == channel_id, channel_user.c.user_id == user_id
+        delete(ChannelUser).where(
+            ChannelUser.channel_id == channel_id, ChannelUser.user_id == user_id
         )
     )
     await session.commit()
