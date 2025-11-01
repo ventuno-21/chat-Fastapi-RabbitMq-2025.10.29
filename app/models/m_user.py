@@ -1,5 +1,5 @@
 from sqlalchemy import String, Boolean, DateTime, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from app.models.base import Base
 
@@ -17,3 +17,5 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+    channels = relationship("Channel", secondary="channel_user", back_populates="users")
+    groups = relationship("Group", secondary="group_user", back_populates="users")

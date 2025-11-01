@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     DEBUG: bool = True
 
     BACKEND_URL: str
+    ALEMBIC_DATABASE_URL: str
 
     DATABASE_URL: str
 
