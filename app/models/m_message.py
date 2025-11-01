@@ -21,3 +21,6 @@ class Message(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+    file_base64: Mapped[str] = mapped_column(String, nullable=True)
+    is_image: Mapped[bool] = mapped_column(Boolean, default=False)
+    self_destruct: Mapped[bool] = mapped_column(Boolean, default=False)
